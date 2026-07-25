@@ -1,0 +1,78 @@
+#container {
+    min-height: 40vh;
+
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+}
+
+#sidebar {
+    border-right: 1px solid black;
+    padding: 10px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#projects {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.project {
+    text-align: center;
+}
+
+#add-project {
+    width: 75%;
+    margin-top: auto;
+}
+
+#main-content {
+    margin-left: 20px;
+    padding: 10px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#title {
+    border-bottom: 1px solid black;
+
+    display: flex;
+    gap: 100px;
+}
+
+#title > button {
+    align-self: center;
+}
+
+#tasks {
+    padding-left: 20px;
+}
+
+.task {
+    border-bottom: 1px dotted black;
+
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 40px;
+}
+
+.description {
+    width: 100%;
+}
+
+.task > button {
+    align-self: center;
+}
+
+#add-task {
+    width: 40%;
+    margin-top: 20px;
+
+    align-self: center;
+}
