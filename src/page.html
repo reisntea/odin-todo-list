@@ -27,7 +27,7 @@
                     <label for="name">Project Name:</label>
                     <input type="text" name="name" id="name" required>
                 </form>
-                <button id="submit-button" type="submit" form="add-project">Add Project</button>
+                <button id="submit-project" type="submit" form="add-project">Add Project</button>
                 <button commandfor="project-dialog" command="close">Close</button>
             </dialog>
         </div>
@@ -42,7 +42,7 @@
                         <label for="name-edit">Project Name:</label>
                         <input type="text" name="name-edit" id="name-edit" required>
                     </form>
-                    <button id="submit-button" type="submit" form="edit-project">Edit Project</button>
+                    <button id="submit-project-edit" type="submit" form="edit-project">Edit Project</button>
                     <button commandfor="edit-project-dialog" command="close">Close</button>
                 </dialog>
 
@@ -50,7 +50,7 @@
             </div>
             <div id="tasks">
                 <div class="task">
-                    <p class="task-name">task 1</p>
+                    <p class="task-title">task 1</p>
                     <p class="due-date">Due: 01/10/1111</p>
                     <p class="priority">Priority: 1</p>
                     <button command="show-modal" commandfor="edit-task-dialog" class="edit-task">Edit Task</button>
@@ -58,7 +58,7 @@
                     <p class="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo doloribus itaque vero recusandae reiciendis tenetur ex, ullam velit, exercitationem molestias ab error facilis quisquam illum eum nam commodi temporibus enim.</p>
                 </div>
                 <div class="task">
-                    <p class="task-name">task 2</p>
+                    <p class="task-title">task 2</p>
                     <p class="due-date">Due: 01/10/1111</p>
                     <p class="priority">Priority: 3</p>
                     <button command="show-modal" commandfor="edit-task-dialog" class="edit-task">Edit Task</button>
@@ -66,7 +66,7 @@
                     <p class="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur distinctio sequi fugit? Tempore, neque consequuntur unde, repellat illo cum optio laborum odit voluptatum similique recusandae, perferendis laudantium earum? Incidunt, aut.</p>
                 </div>
                 <div class="task">
-                    <p class="task-name">task 3</p>
+                    <p class="task-title">task 3</p>
                     <p class="due-date">Due: 01/10/1111</p>
                     <p class="priority">Priority: 3</p>
                     <button command="show-modal" commandfor="edit-task-dialog" class="edit-task">Edit Task</button>
@@ -88,7 +88,7 @@
                     <label for="description">Description: (200 character max)</label>
                     <textarea name="description" id="description" maxlength="200" rows="5" required></textarea>
                 </form>
-                <button id="submit-button" type="submit" form="add-task">Add Task</button>
+                <button id="submit-task" type="submit" form="add-task">Add Task</button>
                 <button commandfor="add-task-dialog" command="close">Close</button>
             </dialog>
 
@@ -104,7 +104,7 @@
                     <label for="description-edit">Description: (200 character max)</label>
                     <textarea name="description-edit" id="description-edit" maxlength="200" rows="5" required></textarea>
                 </form>
-                <button id="submit-button" type="submit" form="edit-task">Edit Task</button>
+                <button id="submit-task-edit" type="submit" form="edit-task">Edit Task</button>
                 <button commandfor="edit-task-dialog" command="close">Close</button>
             </dialog>
         </div>
