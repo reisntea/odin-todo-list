@@ -1,5 +1,5 @@
 import "./styles.css";
-import { format, parse } from "date-fns";
+import { format, parse, set } from "date-fns";
 
 class Task {
     constructor (title, description, dueDate, priority) {
@@ -7,6 +7,17 @@ class Task {
         this.description = description
         // Assume that the date given is formatted mm/dd/yyyy, ex "02/21/1999".
         this.dueDate = parse(`${dueDate}`, 'MM/dd/yyyy', new Date());
+        // Priority goes from 1 to 5, with 1 being most prioritized and 5 being least prioritized.
+        this.priority = priority;
+    }
+
+    // Literally just a copy of the constructor
+    edit (title, description, dueDate, priority) {
+        this.title = title;
+        this.description = description
+        // Assume that the date given is formatted mm/dd/yyyy, ex "02/21/1999".
+        this.dueDate = parse(`${dueDate}`, 'MM/dd/yyyy', new Date());
+        console.log(this.dueDate);
         // Priority goes from 1 to 5, with 1 being most prioritized and 5 being least prioritized.
         this.priority = priority;
     }
@@ -61,7 +72,7 @@ function ProjectController () {
 
     const getProjectByIndex = (index) => projects[index];
 
-    const getTask = (projectIndex, tasksIndex) => projects[projectIndex].getTaskAtIndex(tasksIndex);
+    const getTask = (projectIndex, taskIndex) => projects[projectIndex].getTaskAtIndex(taskIndex);
 
     const formatAllTasksByIndex = (index) => getProjectByIndex(index).formatAllTasks();
 
@@ -72,17 +83,23 @@ function ProjectController () {
         getProjectByIndex(index).addTask(title, description, dueDate, priority);
     }
 
-    const removeTask = (projectIndex, tasksIndex) => {
-        getProjectByIndex(projectIndex).tasks.splice(tasksIndex, 1);
+    const removeTask = (projectIndex, taskIndex) => {
+        getProjectByIndex(projectIndex).tasks.splice(taskIndex, 1);
     };
 
+    // Edits task at the given indices
+    const editTask = (projectIndex, tasksIndex, title, description, dueDate, priority) => {
+        getTask(projectIndex, tasksIndex).edit(title, description, dueDate, priority);
+    }
+
     // These functions are for console functionality
+    //
     const printAllProjectNames = () => {
         console.log(`${getAllProjectNames().join(", ")}`);
     }
 
-    const printTask = (projectIndex, tasksIndex) => {
-        console.log(getTask(projectIndex, tasksIndex).formatTask())
+    const printTask = (projectIndex, taskIndex) => {
+        console.log(getTask(projectIndex, taskIndex).formatTask())
     };
 
     const printAllTasksByIndex = (index) => {
@@ -98,6 +115,7 @@ function ProjectController () {
         addProject,
         addTaskToProject,
         removeTask,
+        editTask,
         printAllProjectNames,
         printTask,
         printAllTasksByIndex,
@@ -105,18 +123,26 @@ function ProjectController () {
     };
 }
 
-// Testing
-window.allProjects = ProjectController();
-allProjects.addProject("Stuff Test");
-allProjects.addProject("Stuff Test 2");
-allProjects.addTaskToProject(0, "task 1", "some thingy to do", "01/02/2020", 1);
-allProjects.addTaskToProject(0, "task 2", "some thingy to do", "01/02/2020", 5);
-allProjects.addTaskToProject(1, "tasky", "thingy to do", "01/23/2020", 4);
-allProjects.printTask(1, 0);
+// Uses stuff from the ProjectController to update the webpage.
+function ScreenController () {
+    // Testing
+    const allProjects = ProjectController();
+    allProjects.addProject("Stuff Test");
+    allProjects.addProject("Stuff Test 2");
+    allProjects.addTaskToProject(0, "task 1", "some thingy to do", "01/01/2020", 1);
+    allProjects.addTaskToProject(0, "task 2", "some thingy to do", "01/02/2020", 5);
+    allProjects.addTaskToProject(1, "tasky", "thingy to do", "01/23/2020", 4);
+    allProjects.printTask(1, 0);
 
-allProjects.printAll();
-allProjects.removeTask(0, 1);
-allProjects.printAll();
+    allProjects.printAll();
+    allProjects.removeTask(0, 1);
+    allProjects.editTask(0, 0, "task replacement", "some thingy to do", "01/22/2020", 1);
+    allProjects.printAll();
 
+    // Add an id attribute to tasks and projects in dom!!
+    // Also make sure to prevent default on submit buttons!! 
+    //             And check validity!!
+    let currentProject;
+}
 
-// Need to add ability to edit tasks and projects.
+ScreenController();
