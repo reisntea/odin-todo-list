@@ -46,6 +46,10 @@ class Project {
         this.tasks.push(new Task(title, description, dueDate, priority));
     }
 
+    changeName (name) {
+        this.name = name;
+    }
+
     getTaskAtIndex (index) {
         return this.tasks[index];
     }
@@ -69,6 +73,14 @@ function ProjectController () {
     const addProject = (name) => {
         projects.push(new Project(`${name}`));
     };
+
+    const removeProject = (projectIndex) => {
+        projects.splice(projectIndex, 1);
+    }
+
+    const editProject = (index, name) => {
+        getProjectByIndex(index).changeName(name);
+    }
 
     const getProjectByIndex = (index) => projects[index];
 
@@ -113,6 +125,8 @@ function ProjectController () {
 
     return {
         addProject,
+        removeProject,
+        editProject,
         addTaskToProject,
         removeTask,
         editTask,
@@ -137,6 +151,11 @@ function ScreenController () {
     allProjects.printAll();
     allProjects.removeTask(0, 1);
     allProjects.editTask(0, 0, "task replacement", "some thingy to do", "01/22/2020", 1);
+    allProjects.editProject(0, "new name");
+    allProjects.addProject("i dont want to be here");
+    allProjects.addTaskToProject(2, "taskksskks", "some thingy to do", "01/02/2020", 5);
+    allProjects.printAll();
+    allProjects.removeProject(2);
     allProjects.printAll();
 
     // Add an id attribute to tasks and projects in dom!!
