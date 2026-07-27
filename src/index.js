@@ -242,6 +242,12 @@ function ScreenController () {
         taskRemoveButton.setAttribute("data-project", projectIndex);
         taskRemoveButton.setAttribute("data-task", taskIndex);
 
+        taskRemoveButton.addEventListener("click", (event) => {
+            console.log("clicked");
+            const target = event.target;
+            removeTask(currentProject, target.getAttribute('data-index'));
+        });
+
         const taskDesc = document.createElement("p")
         taskDesc.setAttribute("class", "description");
 
@@ -278,12 +284,33 @@ function ScreenController () {
         }
     });
 
-    updateDisplay();
-
     // Add ability to remove, edit, and add projects and tasks to page
     // Also make sure to prevent default on submit buttons!! 
     //             And check validity!!
     // Hopefully won't be too hard since update display works fine :)
+
+    // Removes current project and sets the displayed project to be the first project
+    function removeProject (index) {
+        allProjects.removeProject(index);
+        currentProject = 0;
+        updateDisplay();
+    }
+
+    // Listener for remove project button, prevents there being no projects since that will probably make a lot of bugs
+    projectRemoveButton.addEventListener("click", (event) => {
+        if (allProjects.getAllProjectNames().length === 1) return;
+        removeProject(currentProject);
+    });
+
+    // Removes the task from projects and updates display
+    // Event listener is made in the createTaskElement function
+    function removeTask (projectIndex, taskIndex) {
+        allProjects.removeTask(projectIndex, taskIndex);
+        updateDisplay();
+    }
+
+    updateDisplay();
+    
 }
 
 ScreenController();
