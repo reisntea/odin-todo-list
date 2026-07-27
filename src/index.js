@@ -17,7 +17,6 @@ class Task {
         this.description = description
         // Assume that the date given is formatted mm/dd/yyyy, ex "02/21/1999".
         this.dueDate = parse(`${dueDate}`, 'MM/dd/yyyy', new Date());
-        console.log(this.dueDate);
         // Priority goes from 1 to 5, with 1 being most prioritized and 5 being least prioritized.
         this.priority = priority;
     }
@@ -28,6 +27,10 @@ class Task {
 
     formatDate () {
         return format(this.dueDate, "MM/dd/yyyy");
+    }
+
+    formatDateForm () {
+        return format(this.dueDate, "yyyy-MM-dd");
     }
 
     printTask () {
@@ -170,14 +173,34 @@ function ScreenController () {
     allProjects.addProject("Stuff Test 3");
     allProjects.printAll();
 
+    // Variable for the div in the sidebar that gets filled with the project names
     const projectSidebar = document.getElementById("projects");
 
+    // Variables for the header that says the name of the current project and the buttons next to it
+    // Also the add task button
+    // The project edit button is for the form not the one on the page
     const projectHeader = document.getElementById("project-title");
     const projectEditButton = document.getElementById("submit-project-edit");
     const projectRemoveButton = document.getElementById("remove-project");
     const taskAddButton = document.getElementById("submit-task");
 
+    // Variable for the div that gets filled with tasks
     const tasksDiv = document.getElementById("tasks");
+
+    // Variables for the edit project form 
+    const projectEditDialog = document.querySelector("#edit-project-dialog");
+    const projectEditForm = document.querySelector("#edit-project");
+    const projectEditInput = document.querySelector("#name-edit");
+
+    // Variables for the edit task form
+    const taskEditDialog = document.querySelector("#edit-task-dialog");
+    const taskEditForm = document.querySelector("#edit-task");
+    const taskEditFormButton = document.querySelector("#submit-task-edit");
+
+    const taskEditTitle = document.querySelector("#title-edit");
+    const taskEditDueDate = document.querySelector("#date-edit");
+    const taskEditPriority = document.querySelector("#priority-edit");
+    const taskEditDesc = document.querySelector("#description-edit");
 
     // Value is the index of the project whose todo's are currently being shown
     let currentProject = 0;
@@ -208,7 +231,6 @@ function ScreenController () {
     function populateHeader () {
         projectHeader.textContent = allProjects.getProjectName(currentProject);
         projectEditButton.setAttribute("data-project", currentProject);
-        projectRemoveButton.setAttribute("data-project", currentProject);
         taskAddButton.setAttribute("data-project", currentProject);
     }
 
@@ -232,20 +254,30 @@ function ScreenController () {
         taskPriority.setAttribute("class", "priority");
 
         const taskEditButton = document.createElement("button")
-        taskEditButton.setAttribute("class", "edit-task");
         taskEditButton.setAttribute("command", "show-modal");
         taskEditButton.setAttribute("commandfor", "edit-task-dialog");
-        taskEditButton.setAttribute("data-project", projectIndex);
         taskEditButton.setAttribute("data-task", taskIndex);
         const taskRemoveButton = document.createElement("button")
         taskRemoveButton.setAttribute("class", "remove-task");
-        taskRemoveButton.setAttribute("data-project", projectIndex);
         taskRemoveButton.setAttribute("data-task", taskIndex);
 
+        // Event listener to remove task
+        // Made here because it has to be unique to each task
         taskRemoveButton.addEventListener("click", (event) => {
-            console.log("clicked");
             const target = event.target;
             removeTask(currentProject, target.getAttribute('data-index'));
+        });
+
+        // Event listener to add data to the button on the edit dialog referring to this task
+        // Made here for the same reasons as the other one
+        // Also fills in the form with the values of the task to make things easier
+        taskEditButton.addEventListener("click", (event) => {
+            const target = event.target;
+            taskEditFormButton.setAttribute("data-task", target.getAttribute("data-task"));
+            taskEditTitle.value = task.title;
+            taskEditDueDate.value = task.formatDateForm();
+            taskEditPriority.value = task.priority;
+            taskEditDesc.value = task.description;
         });
 
         const taskDesc = document.createElement("p")
@@ -296,7 +328,8 @@ function ScreenController () {
         updateDisplay();
     }
 
-    // Listener for remove project button, prevents there being no projects since that will probably make a lot of bugs
+    // Listener for remove project button
+    // Prevents there being no projects since that will probably make a lot of bugs
     projectRemoveButton.addEventListener("click", (event) => {
         if (allProjects.getAllProjectNames().length === 1) return;
         removeProject(currentProject);
@@ -309,8 +342,51 @@ function ScreenController () {
         updateDisplay();
     }
 
-    updateDisplay();
+    // Edits the name of the current project and updates display
+    function editProject (index, name) {
+        allProjects.editProject(index, name);
+        updateDisplay();
+    }
+
+    // Event listener for the project edit button on the form
+    projectEditButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (projectEditForm.checkValidity()) {
+            editProject(currentProject, projectEditInput.value);
+            projectEditForm.reset();
+            projectEditDialog.close();
+        }
+    });
+
+    // Edits the task and updates display
+    function editTask (projectIndex, taskIndex, title, description, dueDate, priority) {
+        allProjects.editTask(projectIndex, taskIndex, title, description, dueDate, priority);
+        updateDisplay();
+    }
+
+    // Event listener for the task edit button on the form
+    taskEditFormButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (taskEditForm.checkValidity()) {
+            editTask(currentProject, event.target.getAttribute("data-task"), taskEditTitle.value, taskEditDesc.value, convertFormDate(taskEditDueDate.value), taskEditPriority.value);
+            taskEditForm.reset();
+            taskEditDialog.close();
+        }
+    });
+
+
+
+
     
+    // Converts the form's date from yyyy-MM-dd to MM/dd/yyyy and returns it as a string
+    function convertFormDate (date) {
+        let newDate = parse(`${date}`, 'yyyy-MM-dd', new Date())
+        newDate = format(newDate, "MM/dd/yyyy");
+        return newDate;
+    }
+
+    updateDisplay();
+               
 }
 
 ScreenController();

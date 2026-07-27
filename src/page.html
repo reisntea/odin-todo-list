@@ -35,7 +35,7 @@
         <div id="main-content">
             <div id="title">
                 <h2 id="project-title">thingy</h2>
-                <button command="show-modal" commandfor="edit-project-dialog" id="edit-project">Edit Project Name</button>
+                <button command="show-modal" commandfor="edit-project-dialog">Edit Project Name</button>
 
                 <dialog id="edit-project-dialog">
                     <h1>Edit Project</h1>
@@ -98,12 +98,12 @@
                 <form id="edit-task">
                     <label for="title-edit">Task Title:</label>
                     <input type="text" name="title-edit" id="title-edit" required>
-                    <label for="due-date-edit">Due Date: </label>
+                    <label for="date-edit">Due Date: </label>
                     <input type="date" name="date-edit" id="date-edit" pattern="(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(19|20)\d{2}" required>
                     <label for="priority-edit">Priority: (1 to 5, with 1 meaning most prioritized)</label>
                     <input type="number" name="priority-edit" id="priority-edit" min="1" max="5" value="1" required>
                     <label for="description-edit">Description: (200 character max)</label>
-                    <textarea name="description-edit" id="description-edit" maxlength="200" rows="5" required></textarea>
+                    <textarea name="description-edit" id="description-edit" maxlength="200" rows="5" placeholder="Type out description" required></textarea>
                 </form>
                 <button id="submit-task-edit" type="submit" form="edit-task">Edit Task</button>
                 <button commandfor="edit-task-dialog" command="close">Close</button>
