@@ -26,6 +26,7 @@
 .project {
     text-align: center;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 #project-button {
@@ -89,4 +90,8 @@ form {
 
 textarea#description {
     resize: none;
+}
+
+.selected {
+    background-color: lightgray;
 }

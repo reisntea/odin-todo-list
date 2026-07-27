@@ -157,6 +157,7 @@ function ScreenController () {
     allProjects.addTaskToProject(0, "task 2", "some thingy to do", "01/02/2020", 5);
     allProjects.addTaskToProject(0, "task 3", "thingy do", "02/10/2020", 3);
     allProjects.addTaskToProject(1, "tasky", "thingy to do", "01/23/2020", 4);
+    allProjects.addTaskToProject(1, "tasky 2", "to do", "02/23/2020", 2);
     allProjects.printTask(1, 0);
 
     allProjects.printAll();
@@ -166,11 +167,9 @@ function ScreenController () {
     allProjects.addTaskToProject(2, "taskksskks", "some thingy to do", "01/02/2020", 5);
     allProjects.printAll();
     allProjects.removeProject(2);
+    allProjects.addProject("Stuff Test 3");
     allProjects.printAll();
 
-    // Add an id attribute to tasks and projects in dom!!
-    // Also make sure to prevent default on submit buttons!! 
-    //             And check validity!!
     const projectSidebar = document.getElementById("projects");
 
     const projectHeader = document.getElementById("project-title");
@@ -179,10 +178,12 @@ function ScreenController () {
     const taskAddButton = document.getElementById("submit-task");
 
     const tasksDiv = document.getElementById("tasks");
+
     // Value is the index of the project whose todo's are currently being shown
     let currentProject = 0;
 
     // Populates the projects div in the sidebar and gives each div the index of their respective project as data
+    // Also darkens the div corresponding to currentProject
     function populateSideBar () {
         projectSidebar.replaceChildren();
         allProjects.getAllProjectNames().forEach((name, index) => {
@@ -192,6 +193,10 @@ function ScreenController () {
             projectDiv.setAttribute("class", "project");
             projectDiv.setAttribute("data-project", index);
             projectName.textContent = name;
+
+            if (index === currentProject) {
+                projectDiv.classList.add("selected");
+            }
 
             projectDiv.appendChild(projectName);
             projectSidebar.appendChild(projectDiv);
@@ -257,9 +262,28 @@ function ScreenController () {
         return taskDiv;
     }
 
-    populateSideBar();
-    populateHeader();
-    populateTasks();
+    function updateDisplay () {
+        populateSideBar();
+        populateHeader();
+        populateTasks();
+    }
+
+    projectSidebar.addEventListener("click", (event) => {
+        const clickedProject = event.target.closest(".project");
+        if (!clickedProject) return;
+
+        if (currentProject != clickedProject.getAttribute('data-project')) {
+            currentProject = parseInt(clickedProject.getAttribute('data-project'));
+            updateDisplay();
+        }
+    });
+
+    updateDisplay();
+
+    // Add ability to remove, edit, and add projects and tasks to page
+    // Also make sure to prevent default on submit buttons!! 
+    //             And check validity!!
+    // Hopefully won't be too hard since update display works fine :)
 }
 
 ScreenController();
