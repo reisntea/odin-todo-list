@@ -111,10 +111,13 @@ function ProjectController () {
     // Edits task at the given indices
     const editTask = (projectIndex, tasksIndex, title, description, dueDate, priority) => {
         getTask(projectIndex, tasksIndex).edit(title, description, dueDate, priority);
-    }
+    };
 
-    // These functions are for console functionality
-    //
+    const clearAll = () => {
+        projects.length = 0;
+    };
+
+    // The functions below are for console functionality
     const printAllProjectNames = () => {
         console.log(`${getAllProjectNames().join(", ")}`);
     }
@@ -141,6 +144,7 @@ function ProjectController () {
         addTaskToProject,
         removeTask,
         editTask,
+        clearAll,
         getProjectName,
         getAllProjectNames,
         printAllProjectNames,
@@ -152,34 +156,19 @@ function ProjectController () {
 
 // Uses stuff from the ProjectController to update the webpage.
 function ScreenController () {
-    // Testing
+    // Variable containing all the stuff from projectController
     const allProjects = ProjectController();
-    allProjects.addProject("Stuff Test");
-    allProjects.addProject("Stuff Test 2");
-    allProjects.addTaskToProject(0, "task 1", "some thingy to do", "01/01/2020", 1);
-    allProjects.addTaskToProject(0, "task 2", "some thingy to do", "01/02/2020", 5);
-    allProjects.addTaskToProject(0, "task 3", "thingy do", "02/10/2020", 3);
-    allProjects.addTaskToProject(1, "tasky", "thingy to do", "01/23/2020", 4);
-    allProjects.addTaskToProject(1, "tasky 2", "to do", "02/23/2020", 2);
-    allProjects.printTask(1, 0);
-
-    allProjects.printAll();
-    allProjects.editTask(0, 0, "task replacement", "some thingy to do", "01/22/2020", 1);
-    allProjects.editProject(0, "new name");
-    allProjects.addProject("i dont want to be here");
-    allProjects.addTaskToProject(2, "taskksskks", "some thingy to do", "01/02/2020", 5);
-    allProjects.printAll();
-    allProjects.removeProject(2);
-    allProjects.addProject("Stuff Test 3");
-    allProjects.printAll();
 
     // Variable for the div in the sidebar that gets filled with the project names
     const projectSidebar = document.getElementById("projects");
 
+    const resetButton = document.querySelector("#reset");
+
     // Variables for the header that says the name of the current project and the buttons next to it
     // Also the add task button
-    // The project edit button is for the form not the one on the page
+    // The projectEditButton is for the form not the one on the page
     const projectHeader = document.getElementById("project-title");
+    const projectEditDialogButton = document.getElementById("open-edit-project-dialog");
     const projectEditButton = document.getElementById("submit-project-edit");
     const projectRemoveButton = document.getElementById("remove-project");
     const taskAddButton = document.getElementById("submit-task");
@@ -190,6 +179,7 @@ function ScreenController () {
     // Variables for the edit project form 
     const projectEditDialog = document.querySelector("#edit-project-dialog");
     const projectEditForm = document.querySelector("#edit-project");
+        // Edit project form value
     const projectEditInput = document.querySelector("#name-edit");
 
     // Variables for the edit task form
@@ -197,10 +187,31 @@ function ScreenController () {
     const taskEditForm = document.querySelector("#edit-task");
     const taskEditFormButton = document.querySelector("#submit-task-edit");
 
+        // Edit task form values
     const taskEditTitle = document.querySelector("#title-edit");
     const taskEditDueDate = document.querySelector("#date-edit");
     const taskEditPriority = document.querySelector("#priority-edit");
     const taskEditDesc = document.querySelector("#description-edit");
+
+    // Variables for the add project form
+    const projectAddDialog = document.querySelector("#project-dialog");
+    const projectAddForm = document.querySelector("#add-project");
+    const projectAddButton = document.querySelector("#submit-project");
+        // Add project form value
+    const projectAddInput = document.querySelector("#name");
+
+    // Variables for the add task form
+    const taskAddDialog = document.querySelector("#add-task-dialog");
+    const taskAddForm = document.querySelector("#add-task");
+
+        // Add task form values
+    const taskAddTitle = document.querySelector("#title-add");
+    const taskAddDueDate = document.querySelector("#date-add");
+    const taskAddPriority = document.querySelector("#priority-add");
+    const taskAddDesc = document.querySelector("#description-add");
+
+    // Regex for the dates on the forms
+    const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 
     // Value is the index of the project whose todo's are currently being shown
     let currentProject = 0;
@@ -227,7 +238,8 @@ function ScreenController () {
     }
 
     // Changes the name in the header 
-    // Also changes the data-project to be the currentProject on the buttons in the header and the button to add tasks
+    // Also changes the data-project to be the currentProject on the buttons in the header 
+    // and the button to add tasks on the form
     function populateHeader () {
         projectHeader.textContent = allProjects.getProjectName(currentProject);
         projectEditButton.setAttribute("data-project", currentProject);
@@ -265,7 +277,7 @@ function ScreenController () {
         // Made here because it has to be unique to each task
         taskRemoveButton.addEventListener("click", (event) => {
             const target = event.target;
-            removeTask(currentProject, target.getAttribute('data-index'));
+            removeTask(currentProject, target.getAttribute('data-task'));
         });
 
         // Event listener to add data to the button on the edit dialog referring to this task
@@ -306,6 +318,7 @@ function ScreenController () {
         populateTasks();
     }
 
+    // Event listener that controls which project's tasks are shown
     projectSidebar.addEventListener("click", (event) => {
         const clickedProject = event.target.closest(".project");
         if (!clickedProject) return;
@@ -316,10 +329,7 @@ function ScreenController () {
         }
     });
 
-    // Add ability to remove, edit, and add projects and tasks to page
-    // Also make sure to prevent default on submit buttons!! 
-    //             And check validity!!
-    // Hopefully won't be too hard since update display works fine :)
+    // The functions and event listeners below are for removing, editing, and adding projects
 
     // Removes current project and sets the displayed project to be the first project
     function removeProject (index) {
@@ -348,6 +358,13 @@ function ScreenController () {
         updateDisplay();
     }
 
+    // Event listener for the project edit button that opens the modal
+    // Changes the value in the input to be the name of the current project to make things easier
+    projectEditDialogButton.addEventListener("click", (event) => {
+        projectEditInput.value = allProjects.getProjectName(currentProject);
+    });
+
+
     // Event listener for the project edit button on the form
     projectEditButton.addEventListener("click", (event) => {
         event.preventDefault();
@@ -367,17 +384,47 @@ function ScreenController () {
     // Event listener for the task edit button on the form
     taskEditFormButton.addEventListener("click", (event) => {
         event.preventDefault();
-        if (taskEditForm.checkValidity()) {
-            editTask(currentProject, event.target.getAttribute("data-task"), taskEditTitle.value, taskEditDesc.value, convertFormDate(taskEditDueDate.value), taskEditPriority.value);
+        const target = event.target;
+        if (taskEditForm.checkValidity() && taskEditDueDate.value.match(dateRegex)) {
+            editTask(currentProject, target.getAttribute("data-task"), taskEditTitle.value, taskEditDesc.value, convertFormDate(taskEditDueDate.value), taskEditPriority.value);
             taskEditForm.reset();
             taskEditDialog.close();
         }
     });
 
+    // Adds a project to projects array in projectController and changes currentProject to be the project that was made
+    // Also updates display
+    function addProject (name) {
+        allProjects.addProject(name);
+        currentProject = allProjects.getAllProjectNames().length - 1;
+        updateDisplay();
+    }
 
+    // Event listener for the add project button on the form
+    projectAddButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (projectAddForm.checkValidity()) {
+            addProject(projectAddInput.value);
+            projectAddForm.reset();
+            projectAddDialog.close();
+        }
+    });
 
+    // Add tasks to the current project
+    function addTask (index, title, description, dueDate, priority) {
+        allProjects.addTaskToProject(index, title, description, dueDate, priority);
+        updateDisplay();
+    }
 
-    
+    taskAddButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (taskAddForm.checkValidity() && taskAddDueDate.value.match(dateRegex)) {
+            addTask(currentProject, taskAddTitle.value, taskAddDesc.value, convertFormDate(taskAddDueDate.value), taskAddPriority.value);
+            taskAddForm.reset();
+            taskAddDialog.close();
+        }
+    });
+
     // Converts the form's date from yyyy-MM-dd to MM/dd/yyyy and returns it as a string
     function convertFormDate (date) {
         let newDate = parse(`${date}`, 'yyyy-MM-dd', new Date())
@@ -385,8 +432,33 @@ function ScreenController () {
         return newDate;
     }
 
+    // Functions and event listeners below are for setting things up
+
+    // Resets the list and adds the default values
+    function reset () {
+        allProjects.clearAll();
+        addDefault();
+        updateDisplay();
+    }
+
+    resetButton.addEventListener("click", (event) => {
+        reset();
+    });
+    
+    // Adds some default values to allProjects, so that the projects list always has some value
+    function addDefault () {
+        currentProject = 0;
+        allProjects.addProject("Make Todo List");
+        allProjects.addTaskToProject(0, "Make the webpage work", "Add functionality to webpage. Check that all the buttons work.", "07/30/2026", 1);
+        allProjects.addTaskToProject(0, "Fix bugs", "Make sure forms work properly and make sure that adding and removing works too.", "07/30/2026", 2);
+        allProjects.addTaskToProject(0, "Fix more bugs", "Make sure that dates work.", "7/27/2026", 3);
+    }
+
+    addDefault();
     updateDisplay();
                
+    // Add local storage stuff
+    // Probably just make it save allProjects idk
 }
 
 ScreenController();

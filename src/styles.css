@@ -1,3 +1,18 @@
+body {
+    box-sizing: border-box;
+}
+
+#top-header {
+    margin-right: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#reset {
+    font-weight: 900;
+}
+
 #container {
     min-height: 40vh;
 
@@ -26,6 +41,8 @@
 .project {
     text-align: center;
     border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     cursor: pointer;
 }
 
@@ -43,14 +60,14 @@
     flex-direction: column;
 }
 
-#title {
+#title-container {
     border-bottom: 1px solid black;
 
     display: flex;
     gap: 50px;
 }
 
-#title > button {
+#title-container > button {
     align-self: center;
 }
 
@@ -64,6 +81,11 @@
     display: flex;
     flex-wrap: wrap;
     column-gap: 40px;
+    align-items: center;
+}
+
+.task-title {
+    font-size: 1.3rem;
 }
 
 .description {
@@ -88,7 +110,7 @@ form {
     margin-bottom: 10px;
 }
 
-textarea#description {
+textarea {
     resize: none;
 }
 

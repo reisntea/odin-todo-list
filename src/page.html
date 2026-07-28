@@ -7,17 +7,14 @@
 </head>
 <body>
     <h1>To-do List</h1>
-    <p>Add, edit, or remove projects and the tasks assigned to each project.</p>
+    <div id="top-header">
+        <p>Add, edit, or remove projects and the tasks assigned to each project.</p>
+        <button id="reset">Reset To Default</button>
+    </div>
     <div id="container">
         <div id="sidebar">
 
             <div id="projects">
-                <div class="project">
-                    <h2>thingy</h2>
-                </div>
-                <div class="project">
-                    <h2>thingy 2</h2>
-                </div>
             </div>
 
             <button command="show-modal" commandfor="project-dialog" id="project-button">Add Project</button>
@@ -33,9 +30,9 @@
             </dialog>
         </div>
         <div id="main-content">
-            <div id="title">
-                <h2 id="project-title">thingy</h2>
-                <button command="show-modal" commandfor="edit-project-dialog">Edit Project Name</button>
+            <div id="title-container">
+                <h2 id="project-title"></h2>
+                <button command="show-modal" commandfor="edit-project-dialog" id="open-edit-project-dialog">Edit Project Name</button>
 
                 <dialog id="edit-project-dialog">
                     <h1>Edit Project</h1>
@@ -50,44 +47,20 @@
                 <button id="remove-project">Remove Project</button>
             </div>
             <div id="tasks">
-                <div class="task">
-                    <p class="task-title">task 1</p>
-                    <p class="due-date">Due: 01/10/1111</p>
-                    <p class="priority">Priority: 1</p>
-                    <button command="show-modal" commandfor="edit-task-dialog" class="edit-task">Edit Task</button>
-                    <button class="remove-task">Remove Task</button>
-                    <p class="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo doloribus itaque vero recusandae reiciendis tenetur ex, ullam velit, exercitationem molestias ab error facilis quisquam illum eum nam commodi temporibus enim.</p>
-                </div>
-                <div class="task">
-                    <p class="task-title">task 2</p>
-                    <p class="due-date">Due: 01/10/1111</p>
-                    <p class="priority">Priority: 3</p>
-                    <button command="show-modal" commandfor="edit-task-dialog" class="edit-task">Edit Task</button>
-                    <button class="remove-task">Remove Task</button>
-                    <p class="description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur distinctio sequi fugit? Tempore, neque consequuntur unde, repellat illo cum optio laborum odit voluptatum similique recusandae, perferendis laudantium earum? Incidunt, aut.</p>
-                </div>
-                <div class="task">
-                    <p class="task-title">task 3</p>
-                    <p class="due-date">Due: 01/10/1111</p>
-                    <p class="priority">Priority: 3</p>
-                    <button command="show-modal" commandfor="edit-task-dialog" class="edit-task">Edit Task</button>
-                    <button class="remove-task">Remove Task</button>
-                    <p class="description">Lorem ipsum dolor sit amet aut.</p>
-                </div>
             </div>
             <button command="show-modal" commandfor="add-task-dialog" id="add-task-button">Add Task</button>
 
             <dialog id="add-task-dialog">
                 <h1>Add Task</h1>
                 <form id="add-task">
-                    <label for="title">Task Title:</label>
-                    <input type="text" name="title" id="title" required>
-                    <label for="due-date">Due Date: </label>
-                    <input type="date" name="date" id="date" pattern="(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(19|20)\d{2}" required>
-                    <label for="priority">Priority: (1 to 5, with 1 meaning most prioritized)</label>
-                    <input type="number" name="priority" id="priority" min="1" max="5" value="1" required>
-                    <label for="description">Description: (200 character max)</label>
-                    <textarea name="description" id="description" maxlength="200" rows="5" required></textarea>
+                    <label for="title-add">Task Title:</label>
+                    <input type="text" name="title-add" id="title-add" required>
+                    <label for="date-add">Due Date: </label>
+                    <input type="date" name="date-add" id="date-add" pattern="^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$" required>
+                    <label for="priority-add">Priority: (1 to 5, with 1 meaning most prioritized)</label>
+                    <input type="number" name="priority-add" id="priority-add" min="1" max="5" value="1" required>
+                    <label for="description-add">Description: (200 character max)</label>
+                    <textarea name="description-add" id="description-add" maxlength="200" rows="5" required></textarea>
                 </form>
                 <button id="submit-task" type="submit" form="add-task">Add Task</button>
                 <button commandfor="add-task-dialog" command="close">Close</button>
@@ -99,11 +72,11 @@
                     <label for="title-edit">Task Title:</label>
                     <input type="text" name="title-edit" id="title-edit" required>
                     <label for="date-edit">Due Date: </label>
-                    <input type="date" name="date-edit" id="date-edit" pattern="(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(19|20)\d{2}" required>
+                    <input type="date" name="date-edit" id="date-edit" pattern="^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$" required>
                     <label for="priority-edit">Priority: (1 to 5, with 1 meaning most prioritized)</label>
                     <input type="number" name="priority-edit" id="priority-edit" min="1" max="5" value="1" required>
                     <label for="description-edit">Description: (200 character max)</label>
-                    <textarea name="description-edit" id="description-edit" maxlength="200" rows="5" placeholder="Type out description" required></textarea>
+                    <textarea name="description-edit" id="description-edit" maxlength="200" rows="5" required></textarea>
                 </form>
                 <button id="submit-task-edit" type="submit" form="edit-task">Edit Task</button>
                 <button commandfor="edit-task-dialog" command="close">Close</button>
