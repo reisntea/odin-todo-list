@@ -117,6 +117,55 @@ function ProjectController () {
         projects.length = 0;
     };
 
+    // For local storage stuff
+    // Returns a JSON string of the projects array
+    const stringify = () => {
+        return JSON.stringify(projects, null, 1);
+    }
+
+    // Parses JSON and replaces what's currently in projects with the JSON data
+    const parse = (string) => {
+        clearAll();
+        let projectNameTemp = "";
+        let projectIndexTemp = -1;
+        let taskTitleTemp;
+        let taskDescTemp;
+        let taskDateTemp;
+        let taskPriorityTemp;
+        // Parse takes advantage of the way the data is ordered in the parse
+        // Since the parse goes [name] (for project), [title, desc, date, priority] (for projects), 
+        // and then the tasks repeat for each task until it gets to another name for some other project
+        JSON.parse(string, (key, value) => {
+            // console.log(`Key: ${key}, Value: ${value}`);
+            // Checks for project name
+            if (key === "name") {
+                projectNameTemp = value;
+                addProject(projectNameTemp);
+                projectIndexTemp++;
+            } 
+            
+            // Checks for content of a task
+            if (key === "title") {
+                taskTitleTemp = value;
+            } else if (key === "description") {
+                taskDescTemp = value;
+            } else if (key === "dueDate") {
+                taskDateTemp = format(new Date(value),  "MM/dd/yyyy");
+            } else if (key === "priority") {
+                taskPriorityTemp = value;
+                addTaskToProject(projectIndexTemp, taskTitleTemp, taskDescTemp, taskDateTemp, taskPriorityTemp);
+            }
+        });
+    }
+
+    // Adds some default values to allProjects, so that the projects list always has some value
+    const addDefault = () => {
+        addProject("Make Todo List");
+        addTaskToProject(0, "Make the webpage work", "Add functionality to webpage. Check that all the buttons work.", "07/30/2026", 1);
+        addTaskToProject(0, "Fix bugs", "Make sure forms work properly and make sure that adding and removing works too.", "07/30/2026", 2);
+        addTaskToProject(0, "Fix more bugs", "Make sure that dates work.", "7/27/2026", 3);
+    }
+
     // The functions below are for console functionality
     const printAllProjectNames = () => {
         console.log(`${getAllProjectNames().join(", ")}`);
@@ -145,6 +194,9 @@ function ProjectController () {
         removeTask,
         editTask,
         clearAll,
+        stringify,
+        parse,
+        addDefault,
         getProjectName,
         getAllProjectNames,
         printAllProjectNames,
@@ -434,31 +486,29 @@ function ScreenController () {
 
     // Functions and event listeners below are for setting things up
 
-    // Resets the list and adds the default values
+    // Clears data in allProjects and adds the default values
     function reset () {
         allProjects.clearAll();
-        addDefault();
+        allProjects.addDefault();
         updateDisplay();
     }
 
     resetButton.addEventListener("click", (event) => {
         reset();
     });
-    
-    // Adds some default values to allProjects, so that the projects list always has some value
-    function addDefault () {
-        currentProject = 0;
-        allProjects.addProject("Make Todo List");
-        allProjects.addTaskToProject(0, "Make the webpage work", "Add functionality to webpage. Check that all the buttons work.", "07/30/2026", 1);
-        allProjects.addTaskToProject(0, "Fix bugs", "Make sure forms work properly and make sure that adding and removing works too.", "07/30/2026", 2);
-        allProjects.addTaskToProject(0, "Fix more bugs", "Make sure that dates work.", "7/27/2026", 3);
-    }
 
-    addDefault();
+    allProjects.addDefault();
     updateDisplay();
+
+    console.log("clone test");
+    let clone = allProjects.stringify();
+    
+    const clonedProjects = ProjectController();
+
+    clonedProjects.parse(clone);
+    clonedProjects.printAll();
                
     // Add local storage stuff
-    // Probably just make it save allProjects idk
 }
 
 ScreenController();
