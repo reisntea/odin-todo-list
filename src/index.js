@@ -211,9 +211,13 @@ function ScreenController () {
     // Variable containing all the stuff from projectController
     const allProjects = ProjectController();
 
+    // Contains a JSON string that gets saved to localStorage
+    let saveData;
+
     // Variable for the div in the sidebar that gets filled with the project names
     const projectSidebar = document.getElementById("projects");
 
+    // Variable for reset button
     const resetButton = document.querySelector("#reset");
 
     // Variables for the header that says the name of the current project and the buttons next to it
@@ -364,13 +368,15 @@ function ScreenController () {
         return taskDiv;
     }
 
+    // Runs methods to change the display
     function updateDisplay () {
         populateSideBar();
         populateHeader();
         populateTasks();
     }
 
-    // Event listener that controls which project's tasks are shown
+    // Event listener that triggers when a project in the sidebar is clicked
+    // Controls which project's tasks are shown
     projectSidebar.addEventListener("click", (event) => {
         const clickedProject = event.target.closest(".project");
         if (!clickedProject) return;
@@ -388,6 +394,7 @@ function ScreenController () {
         allProjects.removeProject(index);
         currentProject = 0;
         updateDisplay();
+        updateLocalStorage();
     }
 
     // Listener for remove project button
@@ -402,12 +409,14 @@ function ScreenController () {
     function removeTask (projectIndex, taskIndex) {
         allProjects.removeTask(projectIndex, taskIndex);
         updateDisplay();
+        updateLocalStorage();
     }
 
     // Edits the name of the current project and updates display
     function editProject (index, name) {
         allProjects.editProject(index, name);
         updateDisplay();
+        updateLocalStorage();
     }
 
     // Event listener for the project edit button that opens the modal
@@ -431,6 +440,7 @@ function ScreenController () {
     function editTask (projectIndex, taskIndex, title, description, dueDate, priority) {
         allProjects.editTask(projectIndex, taskIndex, title, description, dueDate, priority);
         updateDisplay();
+        updateLocalStorage();
     }
 
     // Event listener for the task edit button on the form
@@ -450,6 +460,7 @@ function ScreenController () {
         allProjects.addProject(name);
         currentProject = allProjects.getAllProjectNames().length - 1;
         updateDisplay();
+        updateLocalStorage();
     }
 
     // Event listener for the add project button on the form
@@ -466,6 +477,7 @@ function ScreenController () {
     function addTask (index, title, description, dueDate, priority) {
         allProjects.addTaskToProject(index, title, description, dueDate, priority);
         updateDisplay();
+        updateLocalStorage();
     }
 
     taskAddButton.addEventListener("click", (event) => {
@@ -487,28 +499,68 @@ function ScreenController () {
     // Functions and event listeners below are for setting things up
 
     // Clears data in allProjects and adds the default values
+    // Also clears localStorage
     function reset () {
         allProjects.clearAll();
         allProjects.addDefault();
+        currentProject = 0;
         updateDisplay();
+        clearLocalStorage();
     }
 
     resetButton.addEventListener("click", (event) => {
         reset();
     });
 
-    allProjects.addDefault();
-    updateDisplay();
+    // Methods to handle local storage
+    // Updates saveData to contain JSON string of allProjects' data and then updates localStorage with that string
+    function updateLocalStorage () {
+        saveData = allProjects.stringify();
+        if (storageAvailable("localStorage")) {
+            localStorage.setItem("projects", saveData);
+        } else {
+            return;
+        }
+    }
 
-    console.log("clone test");
-    let clone = allProjects.stringify();
+    function clearLocalStorage () {
+        localStorage.clear();
+    }
+
+    // Function from mdn docs to check if localStorage is available and usable
+    function storageAvailable(type) {
+        let storage;
+        try {
+            storage = window[type];
+            const x = "__storage_test__";
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        } catch (e) {
+            return (
+            e instanceof DOMException &&
+            e.name === "QuotaExceededError" &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage &&
+            storage.length !== 0
+            );
+        }
+    }
+
+    // Method that's called when the page opens
+    // Checks for projects in localStorage and if it doesn't exist it adds some default values
+    // And if projects does exist it gets that data and puts it in allProjects 
+    function startUp () {
+        if (!localStorage.getItem("projects")) {
+            allProjects.addDefault();
+        } else {
+            allProjects.parse(localStorage.getItem("projects"));
+        }
+        updateDisplay();
+    }
     
-    const clonedProjects = ProjectController();
-
-    clonedProjects.parse(clone);
-    clonedProjects.printAll();
-               
-    // Add local storage stuff
+    // Gets called once when screenController is called
+    startUp();
 }
 
 ScreenController();
